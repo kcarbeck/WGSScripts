@@ -7,6 +7,7 @@
 
 # -O: output type. u = bcf
 # -C: Coefficient for downgrading mapping quality for reads containing excessive mismatches. Given a read with a phred-scaled probability q of being generated from the mapped position, the new mapping quality is about sqrt((INT-q)/INT)*INT. A zero value disables this functionality; if enabled, the recommended value for BWA is 50
+# --threads: number of cores
 # -a: annotate. list of common INFO tags for vcf output
 # -f: Reference genome
 # -multiallelic-caller: alternative model for multialleleic and rare-variant calling designed to overcome known limitations in -c calling mode (previous version)
@@ -14,7 +15,7 @@
 # -O: output type. v=VCF
 # -o: output file name
 
-bcftools mpileup -Ou -C50 -threads 12 -a "FORMAT/AD,FORMAT/DP,INFO/AD,FORMAT/DV,FORMAT/DP4,FORMAT/DPR,INFO/DPR" -f REFERENCE.fasta INDIVIDUAL1_sortedRGmark.bam INDIVIDUAL2_sortedRGmark.bam INDIVIDUAL..N_sortedRGmark.bam  | bcftools call --multiallelic-caller --variants-only --threads 12 -vm -Ov -o FILENAME.vcf
+bcftools mpileup -Ou -C50 --threads 12 -a "FORMAT/AD,FORMAT/DP,INFO/AD,FORMAT/DV,FORMAT/DP4,FORMAT/DPR,INFO/DPR" -f REFERENCE.fasta INDIVIDUAL1_sortedRGmark.bam INDIVIDUAL2_sortedRGmark.bam INDIVIDUAL..N_sortedRGmark.bam  | bcftools call --multiallelic-caller --variants-only --threads 12 -vm -Ov -o FILENAME.vcf
 
 # Filter VCF
 # -s: soft filter. will flag variants as low quality if PHRED score is <20 and depth <5
