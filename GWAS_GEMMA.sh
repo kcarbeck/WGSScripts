@@ -4,11 +4,22 @@
 ## prep beagle files - impute missing data
 java -Xmx96g -jar /programs/beagle4/beagle4.jar gt=FILENAME.vcf nthreads=20 out=FILENAME_beagle_output impute=true
 
+## create chromosome map (if your genome is made up of lots of scaffolds)
+bcftools view -H FILENAME_beagle_output.vcf.gz | cut -f 1 | uniq | awk '{print $0"\t"$0}' > FILENAME.chrom-map.txt
+
 ## create PLINK files
-vcftools --gzvcf FILENAME.vcf.gz --plink --out FILENAME_outputPlinkformat
+# chrom-map: may be used to specify a file name that has a tab-delimited mapping of chromosome name to a desired integer value with one line per chromosome. This file must contain a mapping for every chromosome value found in the file.
+vcftools --gzvcf FILENAME_beagle_output.vcf.gz --plink --chrom-map FILENAME.chrom-map.txt --out FILENAME_outputPlinkformat
 
 ## make .bed files
-/programs/plink-1.9-x86_64-beta5/plink --file FILENAME_outputPlinkformat --make-bed --chr-set [number of scaffolds] --allow-extra-chr 0 --out FILENAME_output_bed
+# --chr-set: number of chromosomes if you have a chromosome level assembly
+# https://www.cog-genomics.org/plink/1.9/data#make_bed
+## To save space and time, you can make a binary ped file (*.bed). This will store the pedigree/phenotype information in separate file (*.fam) and create an extended MAP file (*.bim) (which contains information about the allele names, which would otherwise be lost in the BED file).
+## creates output files:
+###      plink.bed      ( binary file, genotype information )
+###      plink.fam      ( first six columns of mydata.ped )
+###      plink.bim      ( extended MAP file: two extra cols = allele names)
+/programs/plink-1.9-x86_64-beta5/plink --file FILENAME_outputPlinkformat --make-bed --allow-extra-chr 0 --out FILENAME_output_bed
 
 ## enter phenotypic information into the .fam file
 ## KEEP TRACK OF COLUMN NUMBERS
