@@ -1,5 +1,5 @@
 ## ADMIXTURE is a clustering software similar to STRUCTURE with the aim to infer populations and individual ancestries.
-## april 5, 2021
+## April 5, 2021
 
 ## First we have to prune for linkage. ADMIXTURE requires unlinked SNPs in plink format.
 # adadapted from https://speciationgenomics.github.io
